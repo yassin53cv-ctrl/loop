@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VESTRA — Luxury Fashion</title>
+<meta name="description" content="VESTRA — Elevated luxury fashion. Discover curated collections of rare, refined garments crafted for the discerning few.">
+<meta property="og:title" content="VESTRA — Luxury Fashion">
+<meta property="og:description" content="Elevated luxury fashion. Curated for the discerning few.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/images/og-cover.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --burgundy: #2D0B14;
+  --burgundy-mid: #4A1020;
+  --burgundy-light: #6B1B2E;
+  --gold: #C9A96E;
+  --gold-light: #E8D5A3;
+  --cream: #F5F0E8;
+  --cream-dark: #EDE5D4;
+  --charcoal: #1A1A1A;
+  --white: #FAFAF8;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Montserrat', sans-serif;
+  --ease-luxury: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { background: var(--charcoal); color: var(--cream); font-family: var(--font-sans); font-weight: 300; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+/* LOADER */
+#loader {
+  position: fixed; inset: 0; background: var(--burgundy);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; z-index: 9999; overflow: hidden;
+}
+.loader-logo {
+  font-family: var(--font-serif); font-size: clamp(2.5rem, 6vw, 4.5rem);
+  color: var(--gold); letter-spacing: 0.4em; font-weight: 300;
+  opacity: 0; transform: translateY(20px);
+}
+.loader-tagline {
+  font-size: 0.65rem; letter-spacing: 0.35em; color: var(--gold-light);
+  margin-top: 0.75rem; opacity: 0; text-transform: uppercase;
+}
+.loader-line {
+  width: 0; height: 1px; background: var(--gold);
+  margin-top: 2rem; opacity: 0;
+}
+.loader-bar {
+  position: absolute; bottom: 0; left: 0; width: 0%;
+  height: 2px; background: var(--gold);
+}
+
+/* NAVIGATION */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.5rem 4rem; display: flex; align-items: center; justify-content: space-between;
+  transition: background 0.4s var(--ease-luxury), padding 0.4s var(--ease-luxury),
+              backdrop-filter 0.4s;
+}
+nav.scrolled {
+  background: rgba(26, 26, 26, 0.95); backdrop-filter: blur(12px);
+  padding: 1rem 4rem; border-bottom: 1px solid rgba(201, 169, 110, 0.15);
+}
+.nav-logo {
+  font-family: var(--font-serif); font-size: 1.6rem; color: var(--gold);
+  letter-spacing: 0.3em; font-weight: 300;
+}
+.nav-links {
+  display: flex; gap: 2.5rem; align-items: center; list-style: none;
+}
+.nav-links a {
+  font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--cream-dark); font-weight: 400;
+  position: relative; padding-bottom: 2px;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 1px; background: var(--gold);
+  transition: width 0.3s var(--ease-luxury);
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { width: 100%; }
+.nav-right { display: flex; align-items: center; gap: 1.5rem; }
+.cart-btn {
+  position: relative; color: var(--cream-dark); font-size: 1.1rem;
+  cursor: pointer; transition: color 0.3s; background: none; border: none;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+}
+.cart-btn:hover { color: var(--gold); }
+.cart-badge {
+  position: absolute; top: -8px; right: -8px; background: var(--gold);
+  color: var(--burgundy); font-size: 0.6rem; font-weight: 600;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: scale(0); transition: all 0.3s var(--ease-reveal);
+}
+.cart-badge.visible { opacity: 1; transform: scale(1); }
+.hamburger {
+  display: none; flex-direction: column; gap: 5px; cursor: pointer;
+  padding: 4px;
+}
+.hamburger span {
+  display: block; width: 24px; height: 1px; background: var(--cream-dark);
+  transition: all 0.3s var(--ease-luxury);
+}
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* MOBILE MENU */
+.mobile-menu {
+  position: fixed; inset: 0; background: var(--burgundy);
+  z-index: 90; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2.5rem;
+  transform: translateX(100%); transition: transform 0.5s var(--ease-luxury);
+}
+.mobile-menu.open { transform: translateX(0); }
+.mobile-menu a {
+  font-family: var(--font-serif); font-size: 2.5rem; color: var(--gold);
+  letter-spacing: 0.1em; font-weight: 300;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--charcoal);
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(45, 11, 20, 0.8) 0%, transparent 70%),
+              radial-gradient(ellipse at 70% 50%, rgba(45, 11, 20, 0.6) 0%, transparent 70%);
+  z-index: 1;
+}
+.hero-img-container {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.hero-img {
+  width: 100%; height: 120%; object-fit: cover;
+  transform: scale(1.1); opacity: 0.35;
+  filter: grayscale(20%);
+  will-change: transform;
+}
+.hero-content {
+  position: relative; z-index: 2; text-align: center;
+  max-width: 900px; padding: 0 2rem;
+}
+.hero-eyebrow {
+  font-size: 0.65rem; letter-spacing: 0.5em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 2rem; opacity: 0;
+  font-weight: 400;
+}
+.hero-title {
+  font-family: var(--font-serif); font-size: clamp(4rem, 10vw, 9rem);
+  font-weight: 300; line-height: 0.9; color: var(--cream);
+  letter-spacing: -0.01em; overflow: hidden;
+}
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .word { display: inline-block; transform: translateY(110%); }
+.hero-subtitle {
+  font-family: var(--font-serif); font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.4rem); color: var(--gold-light);
+  margin-top: 2rem; opacity: 0; letter-spacing: 0.05em;
+}
+.hero-cta {
+  margin-top: 3.5rem; opacity: 0;
+  display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  padding: 1rem 2.5rem; border: 1px solid var(--gold);
+  color: var(--gold); font-size: 0.65rem; letter-spacing: 0.3em;
+  text-transform: uppercase; font-weight: 500;
+  position: relative; overflow: hidden;
+  transition: color 0.4s var(--ease-luxury);
+}
+.btn-primary::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--gold); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s var(--ease-luxury); z-index: -1;
+}
+.btn-primary:hover { color: var(--burgundy); }
+.btn-primary:hover::before { transform: scaleX(1); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  padding: 1rem 2.5rem; color: var(--cream-dark);
+  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+  font-weight: 400; border-bottom: 1px solid rgba(201,169,110,0.4);
+  transition: color 0.3s, border-color 0.3s;
+}
+.btn-secondary:hover { color: var(--gold); border-color: var(--gold); }
+.hero-scroll {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  opacity: 0; z-index: 2;
+}
+.hero-scroll span { font-size: 0.55rem; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; }
+.scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold), transparent); }
+
+/* MARQUEE */
+.marquee-section {
+  background: var(--burgundy); padding: 1rem 0; overflow: hidden;
+  border-top: 1px solid rgba(201,169,110,0.2); border-bottom: 1px solid rgba(201,169,110,0.2);
+}
+.marquee-track {
+  display: flex; gap: 3rem; white-space: nowrap;
+  animation: marquee 20s linear infinite;
+}
+.marquee-track span {
+  font-family: var(--font-serif); font-size: 0.85rem; color: var(--gold);
+  letter-spacing: 0.3em; font-style: italic;
+}
+.marquee-track .dot { color: var(--gold-light); opacity: 0.5; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* SECTION SHARED */
+section { padding: 8rem 4rem; }
+.section-eyebrow {
+  font-size: 0.6rem; letter-spacing: 0.5em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 1.5rem; font-weight: 400;
+}
+.section-title {
+  font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300; line-height: 1.1; color: var(--cream);
+}
+.section-title em { font-style: italic; color: var(--gold); }
+
+/* ABOUT / EDITORIAL */
+.editorial {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+  align-items: center; max-width: 1400px; margin: 0 auto;
+}
+.editorial-media { position: relative; overflow: hidden; }
+.editorial-media::after {
+  content: ''; position: absolute; inset: 0;
+  border: 1px solid rgba(201,169,110,0.2);
+  pointer-events: none;
+}
+.editorial-img {
+  width: 100%; aspect-ratio: 3/4; object-fit: cover;
+  transform: scale(1.05); transition: transform 8s var(--ease-luxury);
+  filter: grayscale(10%);
+}
+.editorial-media:hover .editorial-img { transform: scale(1); }
+.editorial-text { padding: 2rem 0; }
+.editorial-text p {
+  font-size: 0.95rem; line-height: 1.9; color: rgba(245,240,232,0.75);
+  margin-bottom: 1.5rem; font-weight: 300;
+}
+.editorial-signature {
+  font-family: var(--font-serif); font-size: 1.8rem; color: var(--gold);
+  font-style: italic; margin-top: 2.5rem;
+}
+
+/* COLLECTION */
+.collection { background: var(--charcoal); }
+.collection-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1.5rem; max-width: 1400px; margin: 0 auto 3rem;
+}
+.search-wrap { position: relative; }
+.search-input {
+  background: transparent; border: none; border-bottom: 1px solid rgba(201,169,110,0.3);
+  color: var(--cream); font-family: var(--font-sans); font-size: 0.75rem;
+  letter-spacing: 0.1em; padding: 0.75rem 2.5rem 0.75rem 0;
+  width: 240px; outline: none; transition: border-color 0.3s;
+}
+.search-input::placeholder { color: rgba(245,240,232,0.35); letter-spacing: 0.15em; }
+.search-input:focus { border-bottom-color: var(--gold); }
+.search-icon {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  color: var(--gold); font-size: 0.9rem; pointer-events: none;
+}
+.filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.filter-btn {
+  padding: 0.5rem 1.25rem; border: 1px solid rgba(201,169,110,0.25);
+  color: rgba(245,240,232,0.6); font-size: 0.6rem; letter-spacing: 0.25em;
+  text-transform: uppercase; transition: all 0.3s; font-weight: 400;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--gold); color: var(--burgundy);
+  border-color: var(--gold);
+}
+.products-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem; max-width: 1400px; margin: 0 auto;
+}
+.product-card {
+  position: relative; overflow: hidden; cursor: pointer;
+  background: var(--charcoal);
+}
+.product-img-wrap {
+  overflow: hidden; position: relative; aspect-ratio: 3/4;
+  background: var(--burgundy);
+}
+.product-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.7s var(--ease-luxury);
+  filter: grayscale(5%);
+}
+.product-card:hover .product-img { transform: scale(1.06); }
+.product-overlay {
+  position: absolute; inset: 0; background: rgba(45,11,20,0.6);
+  opacity: 0; transition: opacity 0.4s; display: flex;
+  flex-direction: column; align-items: center; justify-content: flex-end;
+  padding: 2rem; gap: 0.75rem;
+}
+.product-card:hover .product-overlay { opacity: 1; }
+.product-overlay .btn-primary { width: 100%; justify-content: center; }
+.wishlist-btn {
+  position: absolute; top: 1rem; right: 1rem; z-index: 10;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(26,26,26,0.8); color: var(--cream-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; transition: all 0.3s; border: 1px solid transparent;
+}
+.wishlist-btn:hover, .wishlist-btn.active { background: var(--gold); color: var(--burgundy); border-color: var(--gold); }
+.product-info { padding: 1.25rem 0; }
+.product-category {
+  font-size: 0.55rem; letter-spacing: 0.4em; color: var(--gold);
+  text-transform: uppercase; margin-bottom: 0.5rem; font-weight: 400;
+}
+.product-title {
+  font-family: var(--font-serif); font-size: 1.15rem; color: var(--cream);
+  font-weight: 400; margin-bottom: 0.4rem; line-height: 1.3;
+}
+.product-price {
+  font-size: 0.8rem; color: var(--gold-light); letter-spacing: 0.1em; font-weight: 400;
+}
+.load-more {
+  display: block; margin: 3rem auto 0;
+  padding: 1rem 3rem; border: 1px solid rgba(201,169,110,0.4);
+  color: var(--gold); font-size: 0.65rem; letter-spacing: 0.3em;
+  text-transform: uppercase; transition: all 0.4s; font-weight: 400;
+}
+.load-more:hover { background: var(--gold); color: var(--burgundy); }
+.no-products {
+  text-align: center; padding: 4rem; color: rgba(245,240,232,0.4);
+  font-family: var(--font-serif); font-size: 1.5rem; font-style: italic;
+  grid-column: 1 / -1;
+}
+
+/* STATS STRIP */
+.stats {
+  background: var(--burgundy); padding: 5rem 4rem;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem; text-align: center; max-width: 100%;
+}
+.stat-item { padding: 2rem 1rem; }
+.stat-number {
+  font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--gold); font-weight: 300; display: block; line-height: 1;
+}
+.stat-label {
+  font-size: 0.6rem; letter-spacing: 0.4em; color: rgba(245,240,232,0.6);
+  text-transform: uppercase; margin-top: 0.75rem; font-weight: 400;
+}
+
+/* CHECKOUT / CART */
+.cart-drawer {
+  position: fixed; top: 0; right: -480px; width: 480px; height: 100vh;
+  background: var(--charcoal); z-index: 200;
+  border-left: 1px solid rgba(201,169,110,0.2);
+  display: flex; flex-direction: column;
+  transition: right 0.5s var(--ease-luxury);
+  overflow: hidden;
+}
+.cart-drawer.open { right: 0; }
+.cart-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 199; opacity: 0; pointer-events: none;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.4s;
+}
+.cart-overlay.visible { opacity: 1; pointer-events: all; }
+.cart-header {
+  padding: 2rem 2rem 1.5rem; border-bottom: 1px solid rgba(201,169,110,0.15);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cart-header h2 {
+  font-family: var(--font-serif); font-size: 1.5rem; color: var(--cream);
+  font-weight: 400; letter-spacing: 0.05em;
+}
+.cart-close {
+  color: var(--cream-dark); font-size: 1.2rem; transition: color 0.3s;
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+}
+.cart-close:hover { color: var(--gold); }
+.cart-items { flex: 1; overflow-y: auto; padding: 1.5rem 2rem; }
+.cart-items::-webkit-scrollbar { width: 2px; }
+.cart-items::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); }
+.cart-item {
+  display: grid; grid-template-columns: 80px 1fr auto;
+  gap: 1rem; align-items: center; padding: 1rem 0;
+  border-bottom: 1px solid rgba(201,169,110,0.1);
+}
+.cart-item-img { width: 80px; aspect-ratio: 3/4; object-fit: cover; }
+.cart-item-title { font-family: var(--font-serif); font-size: 0.95rem; color: var(--cream); }
+.cart-item-price { font-size: 0.75rem; color: var(--gold-light); margin-top: 0.25rem; }
+.cart-item-qty {
+  display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;
+}
+.qty-btn {
+  width: 24px; height: 24px; border: 1px solid rgba(201,169,110,0.3);
+  color: var(--cream-dark); font-size: 0.8rem; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s;
+}
+.qty-btn:hover { border-color: var(--gold); color: var(--gold); }
+.qty-val { font-size: 0.75rem; color: var(--cream); min-width: 16px; text-align: center; }
+.cart-item-remove { color: rgba(245,240,232,0.3); font-size: 0.8rem; transition: color 0.2s; }
+.cart-item-remove:hover { color: #c0392b; }
+.cart-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: 1.5rem; color: rgba(245,240,232,0.35);
+}
+.cart-empty-icon { font-size: 3rem; }
+.cart-empty p { font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; }
+.cart-footer { padding: 1.5rem 2rem 2rem; border-top: 1px solid rgba(201,169,110,0.15); }
+.cart-totals { margin-bottom: 1.5rem; }
+.cart-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.75rem; color: rgba(245,240,232,0.65);
+  padding: 0.4rem 0; letter-spacing: 0.05em;
+}
+.cart-row.total {
+  font-size: 0.9rem; color: var(--cream); border-top: 1px solid rgba(201,169,110,0.2);
+  padding-top: 0.75rem; margin-top: 0.25rem; font-weight: 500;
+}
+.cart-row .amount { color: var(--gold); }
+.checkout-btn { width: 100%; padding: 1.1rem; }
+
+/* CHECKOUT PAGE */
+.checkout-section {
+  min-height: 100vh; padding-top: 8rem; background: var(--charcoal);
+  display: none;
+}
+.checkout-section.visible { display: block; }
+.checkout-inner {
+  max-width: 900px; margin: 0 auto; padding: 0 2rem 6rem;
+  display: grid; grid-template-columns: 1fr 400px; gap: 4rem; align-items: start;
+}
+.checkout-form-section {}
+.checkout-form h2 {
+  font-family: var(--font-serif); font-size: 2rem; color: var(--cream);
+  margin-bottom: 2.5rem; font-weight: 400;
+}
+.form-group { margin-bottom: 1.75rem; }
+.form-label {
+  display: block; font-size: 0.6rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; font-weight: 400;
+}
+.form-input {
+  width: 100%; background: transparent;
+  border: none; border-bottom: 1px solid rgba(201,169,110,0.25);
+  color: var(--cream); font-family: var(--font-sans); font-size: 0.85rem;
+  padding: 0.75rem 0; outline: none; font-weight: 300;
+  transition: border-color 0.3s;
+}
+.form-input:focus { border-bottom-color: var(--gold); }
+.form-input::placeholder { color: rgba(245,240,232,0.25); }
+.form-input.error { border-bottom-color: #c0392b; }
+
+/* PAYMENT METHODS */
+.payment-methods { margin-top: 2.5rem; }
+.payment-methods h3 {
+  font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.25rem; font-weight: 400;
+}
+.payment-options { display: flex; flex-direction: column; gap: 1rem; }
+.payment-option {
+  border: 1px solid rgba(201,169,110,0.2); padding: 1.25rem;
+  cursor: pointer; transition: border-color 0.3s; position: relative;
+  display: flex; align-items: center; gap: 1.25rem;
+}
+.payment-option:hover { border-color: rgba(201,169,110,0.5); }
+.payment-option.selected { border-color: var(--gold); }
+.payment-option input[type="radio"] { display: none; }
+.payment-radio-custom {
+  width: 18px; height: 18px; border: 1px solid rgba(201,169,110,0.4);
+  border-radius: 50%; flex-shrink: 0; position: relative; transition: border-color 0.3s;
+}
+.payment-option.selected .payment-radio-custom { border-color: var(--gold); }
+.payment-option.selected .payment-radio-custom::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); width: 8px; height: 8px;
+  border-radius: 50%; background: var(--gold);
+}
+.payment-icon { font-size: 1.8rem; }
+.payment-info {}
+.payment-name { font-size: 0.8rem; color: var(--cream); font-weight: 400; margin-bottom: 0.25rem; }
+.payment-number { font-size: 0.7rem; color: var(--gold-light); letter-spacing: 0.05em; }
+.payment-notice {
+  margin-top: 1.5rem; padding: 1.25rem; background: rgba(45,11,20,0.5);
+  border-left: 2px solid var(--gold); font-size: 0.75rem;
+  color: rgba(245,240,232,0.7); line-height: 1.7; font-weight: 300;
+}
+.whatsapp-btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  width: 100%; margin-top: 1rem; padding: 1rem;
+  background: #25D366; color: #fff;
+  font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-weight: 500; transition: background 0.3s;
+}
+.whatsapp-btn:hover { background: #128C7E; }
+.checkout-summary {
+  background: rgba(45,11,20,0.4); border: 1px solid rgba(201,169,110,0.15);
+  padding: 2rem; position: sticky; top: 7rem;
+}
+.checkout-summary h3 {
+  font-family: var(--font-serif); font-size: 1.25rem; color: var(--cream);
+  margin-bottom: 1.5rem; font-weight: 400; letter-spacing: 0.05em;
+}
+.summary-items { margin-bottom: 1.5rem; }
+.summary-item {
+  display: flex; justify-content: space-between; gap: 1rem;
+  font-size: 0.75rem; padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(201,169,110,0.1);
+}
+.summary-item-name { color: rgba(245,240,232,0.7); flex: 1; font-weight: 300; }
+.summary-item-price { color: var(--gold-light); white-space: nowrap; }
+.summary-total {
+  display: flex; justify-content: space-between;
+  font-size: 0.9rem; color: var(--cream); padding-top: 1rem;
+}
+.summary-total .total-price { color: var(--gold); font-weight: 500; }
+.place-order-btn { width: 100%; margin-top: 2rem; padding: 1.2rem; font-size: 0.65rem; }
+
+/* FOOTER */
+footer {
+  background: var(--burgundy); padding: 5rem 4rem 2rem;
+  border-top: 1px solid rgba(201,169,110,0.2);
+}
+.footer-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 4rem;
+  margin-bottom: 4rem;
+}
+.footer-brand {}
+.footer-logo {
+  font-family: var(--font-serif); font-size: 2rem; color: var(--gold);
+  letter-spacing: 0.3em; font-weight: 300; margin-bottom: 1rem;
+}
+.footer-tagline {
+  font-size: 0.75rem; color: rgba(245,240,232,0.5);
+  line-height: 1.8; font-weight: 300; max-width: 260px;
+}
+.footer-col h4 {
+  font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.25rem; font-weight: 400;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+.footer-col a {
+  font-size: 0.75rem; color: rgba(245,240,232,0.5);
+  transition: color 0.3s; font-weight: 300;
+}
+.footer-col a:hover { color: var(--gold); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 2rem; border-top: 1px solid rgba(201,169,110,0.15);
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-copy { font-size: 0.65rem; color: rgba(245,240,232,0.3); letter-spacing: 0.1em; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
+  background: var(--burgundy); color: var(--cream);
+  border: 1px solid rgba(201,169,110,0.3); padding: 1rem 1.5rem;
+  font-size: 0.75rem; letter-spacing: 0.05em; min-width: 280px;
+  transform: translateY(120%); opacity: 0; transition: all 0.4s var(--ease-luxury);
+  border-left: 3px solid var(--gold);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* CONTACT */
+.contact-section { background: var(--charcoal); }
+.contact-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+.contact-inner .section-title { margin-bottom: 3rem; }
+.contact-grid { display: flex; flex-direction: column; gap: 1.25rem; }
+.contact-item {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.25rem; border: 1px solid rgba(201,169,110,0.15);
+  color: rgba(245,240,232,0.65); font-size: 0.8rem; font-weight: 300;
+  transition: border-color 0.3s; text-align: left;
+}
+.contact-item:hover { border-color: rgba(201,169,110,0.4); }
+.contact-item-icon { color: var(--gold); font-size: 1.2rem; flex-shrink: 0; }
+
+/* SCROLL ANIMATIONS */
+.fade-up { opacity: 0; transform: translateY(40px); }
+.fade-in { opacity: 0; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  nav { padding: 1.25rem 2rem; }
+  nav.scrolled { padding: 1rem 2rem; }
+  section { padding: 5rem 2rem; }
+  .editorial { grid-template-columns: 1fr; gap: 3rem; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .checkout-inner { grid-template-columns: 1fr; }
+  .checkout-summary { position: static; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-right { display: none; }
+  .hamburger { display: flex; }
+  .hero-title { font-size: clamp(3rem, 12vw, 5rem); }
+  .cart-drawer { width: 100%; right: -100%; }
+  .stats { padding: 3rem 2rem; }
+  .footer-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  section { padding: 4rem 1.5rem; }
+  .collection-controls { flex-direction: column; align-items: flex-start; }
+  .search-input { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader" role="status" aria-label="Loading VESTRA">
+  <div class="loader-logo">VESTRA</div>
+  <div class="loader-tagline">Elevated Luxury Fashion</div>
+  <div class="loader-line"></div>
+  <div class="loader-bar" id="loaderBar"></div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Mobile navigation">
+  <a href="#hero" onclick="closeMobileMenu()">Home</a>
+  <a href="#collection" onclick="closeMobileMenu()">Collection</a>
+  <a href="#about" onclick="closeMobileMenu()">About</a>
+  <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- NAVIGATION -->
+<nav id="navbar" role="navigation" aria-label="Main navigation">
+  <a href="#hero" class="nav-logo">VESTRA</a>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="openCart()" aria-label="Open shopping cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      Cart
+      <span class="cart-badge" id="cartBadge" aria-live="polite">0</span>
+    </button>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle mobile menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero" aria-label="Hero section">
+  <div class="hero-bg"></div>
+  <div class="hero-img-container">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1920&q=80" alt="Luxury fashion editorial" loading="eager">
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Autumn / Winter Collection 2025</p>
+    <h1 class="hero-title" aria-label="VESTRA — Dressed in silence">
+      <span class="line"><span class="word">VESTRA</span></span>
+      <span class="line" style="font-style:italic;color:var(--gold)"><span class="word">Dressed</span></span>
+      <span class="line"><span class="word">in Silence.</span></span>
+    </h1>
+    <p class="hero-subtitle">For those who understand that true luxury<br>needs no announcement.</p>
+    <div class="hero-cta">
+      <a href="#collection" class="btn-primary" aria-label="Explore the collection">Explore Collection</a>
+      <a href="#about" class="btn-secondary">Our Ethos</a>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>Evening Wear</span><span class="dot">·</span>
+    <span>Bespoke Tailoring</span><span class="dot">·</span>
+    <span>Ready to Wear</span><span class="dot">·</span>
+    <span>Limited Editions</span><span class="dot">·</span>
+    <span>Seasonal Collections</span><span class="dot">·</span>
+    <span>Rare Fabrics</span><span class="dot">·</span>
+    <span>Evening Wear</span><span class="dot">·</span>
+    <span>Bespoke Tailoring</span><span class="dot">·</span>
+    <span>Ready to Wear</span><span class="dot">·</span>
+    <span>Limited Editions</span><span class="dot">·</span>
+    <span>Seasonal Collections</span><span class="dot">·</span>
+    <span>Rare Fabrics</span><span class="dot">·</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" aria-label="About VESTRA">
+  <div class="editorial">
+    <div class="editorial-media fade-in">
+      <img class="editorial-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80" alt="VESTRA editorial — luxury garment detail" loading="lazy">
+    </div>
+    <div class="editorial-text">
+      <p class="section-eyebrow fade-up">The House of VESTRA</p>
+      <h2 class="section-title fade-up">Craft that <em>endures.</em><br>Elegance that speaks.</h2>
+      <div class="fade-up" style="margin-top:2rem">
+        <p>VESTRA was founded on a singular principle: that true luxury is not about volume or velocity, but about the intimate relationship between a garment and the person who wears it. Each piece is a considered statement, a whisper of extraordinary craft.</p>
+        <p>We source only the most exceptional fabrics — hand-loomed silk from Piedmont, worsted wool from Scottish highland mills, cashmere combed from Mongolian herds — and entrust them to artisans who have spent lifetimes perfecting their craft.</p>
+        <p>This is not fashion. This is heritage in motion.</p>
+      </div>
+      <div class="editorial-signature fade-up">— The VESTRA Atelier</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats" role="region" aria-label="VESTRA by the numbers">
+  <div class="stat-item fade-up">
+    <span class="stat-number" data-count="12">0</span>
+    <span class="stat-label">Years of Craft</span>
+  </div>
+  <div class="stat-item fade-up">
+    <span class="stat-number" data-count="340">0</span>
+    <span class="stat-label">Exclusive Pieces</span>
+  </div>
+  <div class="stat-item fade-up">
+    <span class="stat-number" data-count="28">0</span>
+    <span class="stat-label">Artisan Partners</span>
+  </div>
+  <div class="stat-item fade-up">
+    <span class="stat-number" data-count="9">0</span>
+    <span class="stat-label">Global Markets</span>
+  </div>
+</div>
+
+<!-- COLLECTION -->
+<section class="collection" id="collection" aria-label="VESTRA collection">
+  <div style="max-width:1400px;margin:0 auto 3rem">
+    <p class="section-eyebrow fade-up">The Collection</p>
+    <h2 class="section-title fade-up">Curated for <em>the few.</em></h2>
+  </div>
+  <div class="collection-controls fade-up">
+    <div class="search-wrap" role="search">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search pieces..." aria-label="Search collection">
+      <span class="search-icon" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+    </div>
+    <div class="filter-tabs" role="group" aria-label="Filter by category">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="Evening">Evening</button>
+      <button class="filter-btn" data-category="Daywear">Daywear</button>
+      <button class="filter-btn" data-category="Outerwear">Outerwear</button>
+      <button class="filter-btn" data-category="Accessories">Accessories</button>
+    </div>
+  </div>
+  <div class="products-grid" id="productsGrid" aria-label="Products">
+    <!-- Products loaded here -->
+  </div>
+  <button class="load-more" id="loadMoreBtn" aria-label="Load more products" style="display:none">Load More</button>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact" aria-label="Contact VESTRA">
+  <div class="contact-inner">
+    <p class="section-eyebrow fade-up" style="text-align:center">Get in Touch</p>
+    <h2 class="section-title fade-up" style="text-align:center;margin-bottom:1rem">Let us <em>assist</em> you.</h2>
+    <p class="fade-up" style="color:rgba(245,240,232,0.5);font-size:0.85rem;text-align:center;margin-bottom:3rem;font-weight:300;line-height:1.8">Our concierge team is available to guide you through our collection, arrange bespoke consultations, or assist with any inquiry.</p>
+    <div class="contact-grid fade-up">
+      <div class="contact-item">
+        <span class="contact-item-icon" aria-hidden="true">📱</span>
+        <div>
+          <div style="font-size:0.6rem;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:0.25rem">WhatsApp & Orders</div>
+          <div>01022950178</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-item-icon" aria-hidden="true">📲</span>
+        <div>
+          <div style="font-size:0.6rem;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:0.25rem">Vodafone Cash</div>
+          <div>01013202241</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-item-icon" aria-hidden="true">💳</span>
+        <div>
+          <div style="font-size:0.6rem;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:0.25rem">InstaPay</div>
+          <div>01022950178</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">VESTRA</div>
+      <p class="footer-tagline">Elevated luxury fashion, crafted for those who understand that true refinement needs no announcement.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Collection</h4>
+      <ul>
+        <li><a href="#collection">Evening Wear</a></li>
+        <li><a href="#collection">Daywear</a></li>
+        <li><a href="#collection">Outerwear</a></li>
+        <li><a href="#collection">Accessories</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>House</h4>
+      <ul>
+        <li><a href="#about">Our Story</a></li>
+        <li><a href="#about">Craftsmanship</a></li>
+        <li><a href="#about">Sustainability</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Client Services</h4>
+      <ul>
+        <li><a href="#contact">Personal Concierge</a></li>
+        <li><a href="#contact">Order Enquiries</a></li>
+        <li><a href="/admin">Admin Portal</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 VESTRA. All rights reserved. Cairo, Egypt.</span>
+    <span class="footer-copy" style="font-style:italic;color:rgba(201,169,110,0.4)">Where silence speaks of luxury.</span>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()" aria-hidden="true"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart" role="complementary">
+  <div class="cart-header">
+    <h2>Your Selection</h2>
+    <button class="cart-close" onclick="closeCart()" aria-label="Close cart">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-totals">
+      <div class="cart-row"><span>Subtotal</span><span class="amount" id="cartSubtotal">EGP 0</span></div>
+      <div class="cart-row"><span>Shipping</span><span class="amount">Calculated at checkout</span></div>
+      <div class="cart-row total"><span>Estimated Total</span><span class="amount" id="cartTotal">EGP 0</span></div>
+    </div>
+    <button class="btn-primary checkout-btn" onclick="proceedToCheckout()" id="checkoutBtn">Proceed to Checkout</button>
+  </div>
+</aside>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ===== STATE =====
+let cart = JSON.parse(localStorage.getItem('vestra_cart') || '[]');
+let wishlist = JSON.parse(localStorage.getItem('vestra_wishlist') || '[]');
+let allProducts = [];
+let displayedCount = 6;
+let currentFilter = 'all';
+let currentSearch = '';
+let checkoutMode = false;
+
+// ===== GSAP LOADER =====
+gsap.registerPlugin(ScrollTrigger);
+
+const tl = gsap.timeline();
+tl.to('#loader .loader-logo', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+  .to('#loader .loader-tagline', { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.4')
+  .to('#loader .loader-line', { opacity: 1, width: 80, duration: 0.6, ease: 'power2.out' }, '-=0.3')
+  .to('#loaderBar', { width: '100%', duration: 1.2, ease: 'power1.inOut' }, '-=0.2')
+  .to('#loader', { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'power4.inOut', delay: 0.2 })
+  .set('#loader', { display: 'none' })
+  .from(document.querySelectorAll('.hero-word, .hero-eyebrow, .hero-subtitle, .hero-cta, .hero-scroll'), {
+    opacity: 0, duration: 0 
+  });
+
+// Hero word reveal
+window.addEventListener('load', () => {
+  gsap.to('.hero-title .word', { y: 0, duration: 1.2, ease: 'power4.out', stagger: 0.12, delay: 2.2 });
+  gsap.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 2.6 });
+  gsap.to('.hero-subtitle', { opacity: 1, duration: 1, ease: 'power3.out', delay: 2.9 });
+  gsap.to('.hero-cta', { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 3.1 });
+  gsap.to('.hero-scroll', { opacity: 1, duration: 1, ease: 'power3.out', delay: 3.5 });
+});
+
+// Parallax hero
+gsap.to('.hero-img', {
+  y: '20%',
+  ease: 'none',
+  scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+});
+
+// Scroll reveals
+document.querySelectorAll('.fade-up').forEach(el => {
+  gsap.fromTo(el, { y: 50, opacity: 0 }, {
+    y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+  });
+});
+document.querySelectorAll('.fade-in').forEach(el => {
+  gsap.fromTo(el, { opacity: 0, scale: 0.97 }, {
+    opacity: 1, scale: 1, duration: 1.2, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+  });
+});
+
+// Stats counter
+document.querySelectorAll('.stat-number[data-count]').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 80%',
+    onEnter: () => {
+      const target = parseInt(el.dataset.count);
+      gsap.to({ val: 0 }, {
+        val: target, duration: 2, ease: 'power2.out',
+        onUpdate: function() { el.textContent = Math.round(this.targets()[0].val); }
+      });
+    }
+  });
+});
+
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// ===== MOBILE MENU =====
+document.getElementById('hamburger').addEventListener('click', function() {
+  const open = document.getElementById('mobileMenu').classList.toggle('open');
+  this.classList.toggle('open', open);
+  this.setAttribute('aria-expanded', open);
+});
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('hamburger').setAttribute('aria-expanded', 'false');
+}
+
+// ===== PRODUCTS =====
+const fallbackProducts = [
+  { _id: '1', title: 'Le Manteau Noir', price: 12500, description: 'Hand-tailored double-breasted overcoat in virgin Shetland wool. Structured silhouette, satin-lined, horn buttons.', imageUrl: 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80', category: 'Outerwear', inStock: true },
+  { _id: '2', title: 'Robe du Soir', price: 18900, description: 'Floor-length bias-cut evening gown in silk charmeuse. Deep cowl back, hand-finished hem, available in midnight and ivory.', imageUrl: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&q=80', category: 'Evening', inStock: true },
+  { _id: '3', title: 'Le Costume Crème', price: 22400, description: 'Two-piece cream wool suit with wide-leg trousers. Unstructured blazer, self-covered buttons, fully lined in silk.', imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80', category: 'Daywear', inStock: true },
+  { _id: '4', title: 'Châle en Cachemire', price: 7800, description: 'Oversized cashmere shawl in sand and umber stripe. Hand-loomed in Kashmir, natural dyes, fringed edge.', imageUrl: 'https://images.unsplash.com/photo-1601762603339-fd61e28b698a?w=600&q=80', category: 'Accessories', inStock: true },
+  { _id: '5', title: 'La Blouse Ivoire', price: 5400, description: 'Relaxed silk blouse in ivory with pintuck detailing. Deep cuffs, mother-of-pearl buttons, curved hem.', imageUrl: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600&q=80', category: 'Daywear', inStock: true },
+  { _id: '6', title: 'Robe Noire Structurée', price: 15200, description: 'Architectural black dress in bonded crepe. Asymmetric neckline, invisible zip, midi length with side split.', imageUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80', category: 'Evening', inStock: true }
+];
+
+async function loadProducts() {
+  try {
+    const res = await fetch('/api/products');
+    if (res.ok) {
+      allProducts = await res.json();
+      if (allProducts.length === 0) allProducts = fallbackProducts;
+    } else {
+      allProducts = fallbackProducts;
+    }
+  } catch {
+    allProducts = fallbackProducts;
+  }
+  renderProducts();
+}
+
+function getFilteredProducts() {
+  return allProducts.filter(p => {
+    const matchCat = currentFilter === 'all' || p.category === currentFilter;
+    const matchSearch = !currentSearch || p.title.toLowerCase().includes(currentSearch.toLowerCase());
+    return matchCat && matchSearch;
+  });
+}
+
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  const filtered = getFilteredProducts();
+  const toShow = filtered.slice(0, displayedCount);
+  
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-products">No pieces found in this selection.</div>';
+    document.getElementById('loadMoreBtn').style.display = 'none';
+    return;
+  }
+
+  grid.innerHTML = toShow.map(p => `
+    <article class="product-card" data-id="${p._id}">
+      <div class="product-img-wrap">
+        <button class="wishlist-btn ${wishlist.includes(p._id) ? 'active' : ''}" onclick="toggleWishlist('${p._id}', event)" aria-label="${wishlist.includes(p._id) ? 'Remove from' : 'Add to'} wishlist">
+          ${wishlist.includes(p._id) ? '♥' : '♡'}
+        </button>
+        <img class="product-img" src="${p.imageUrl}" alt="${p.title}" loading="lazy">
+        <div class="product-overlay">
+          <button class="btn-primary" onclick="addToCart('${p._id}')" style="font-size:0.6rem;letter-spacing:0.2em;border:1px solid var(--gold)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <p class="product-category">${p.category}</p>
+        <h3 class="product-title">${p.title}</h3>
+        <p class="product-price">EGP ${p.price.toLocaleString('en-EG')}</p>
+      </div>
+    </article>
+  `).join('');
+
+  document.getElementById('loadMoreBtn').style.display = filtered.length > displayedCount ? 'block' : 'none';
+
+  // Animate new cards
+  gsap.fromTo('.product-card', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: 'power3.out' });
+}
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  currentSearch = e.target.value;
+  displayedCount = 6;
+  renderProducts();
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.category;
+    displayedCount = 6;
+    renderProducts();
+  });
+});
+
+document.getElementById('loadMoreBtn').addEventListener('click', () => {
+  displayedCount += 6;
+  renderProducts();
+});
+
+// ===== WISHLIST =====
+function toggleWishlist(id, e) {
+  e.stopPropagation();
+  const idx = wishlist.indexOf(id);
+  if (idx > -1) { wishlist.splice(idx, 1); showToast('Removed from wishlist'); }
+  else { wishlist.push(id); showToast('Added to wishlist ♥'); }
+  localStorage.setItem('vestra_wishlist', JSON.stringify(wishlist));
+  renderProducts();
+}
+
+// ===== CART =====
+function addToCart(id) {
+  const product = allProducts.find(p => p._id === id);
+  if (!product) return;
+  const existing = cart.find(i => i._id === id);
+  if (existing) existing.qty++;
+  else cart.push({ ...product, qty: 1 });
+  saveCart();
+  updateCartUI();
+  showToast(`${product.title} added to cart`);
+  openCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i._id !== id);
+  saveCart();
+  updateCartUI();
+}
+
+function updateQty(id, delta) {
+  const item = cart.find(i => i._id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else { saveCart(); updateCartUI(); }
+}
+
+function saveCart() { localStorage.setItem('vestra_cart', JSON.stringify(cart)); }
+
+function updateCartUI() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = count;
+  badge.classList.toggle('visible', count > 0);
+  document.getElementById('cartSubtotal').textContent = `EGP ${total.toLocaleString('en-EG')}`;
+  document.getElementById('cartTotal').textContent = `EGP ${total.toLocaleString('en-EG')}`;
+
+  const itemsEl = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    itemsEl.innerHTML = `<div class="cart-empty"><span class="cart-empty-icon">◻</span><p>Your selection is empty.</p></div>`;
+    return;
+  }
+  itemsEl.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <img class="cart-item-img" src="${item.imageUrl}" alt="${item.title}" loading="lazy">
+      <div>
+        <div class="cart-item-title">${item.title}</div>
+        <div class="cart-item-price">EGP ${(item.price * item.qty).toLocaleString('en-EG')}</div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="updateQty('${item._id}', -1)" aria-label="Decrease quantity">−</button>
+          <span class="qty-val">${item.qty}</span>
+          <button class="qty-btn" onclick="updateQty('${item._id}', 1)" aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart('${item._id}')" aria-label="Remove ${item.title}">✕</button>
+    </div>
+  `).join('');
+}
+
+function openCart() {
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// ===== CHECKOUT =====
+function proceedToCheckout() {
+  if (cart.length === 0) { showToast('Your cart is empty'); return; }
+  closeCart();
+  showCheckout();
+}
+
+function showCheckout() {
+  checkoutMode = true;
+  document.body.innerHTML += buildCheckoutHTML();
+  document.getElementById('cartBtn') && (document.getElementById('cartBtn').style.display = 'none');
+  initCheckoutEvents();
+}
+
+function buildCheckoutHTML() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  return `
+  <div id="checkoutPage" style="position:fixed;inset:0;background:var(--charcoal);z-index:150;overflow-y:auto;padding-top:6rem">
+    <button onclick="document.getElementById('checkoutPage').remove();document.body.style.overflow=''" style="position:fixed;top:1.5rem;left:2rem;z-index:160;color:var(--gold);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;font-family:var(--font-sans);font-weight:400" aria-label="Back to collection">← Back</button>
+    <div style="max-width:1100px;margin:0 auto;padding:2rem 2rem 6rem;display:grid;grid-template-columns:1fr 380px;gap:4rem;align-items:start">
+      <div>
+        <p style="font-size:0.6rem;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:1.5rem;font-weight:400">Checkout</p>
+        <h2 style="font-family:var(--font-serif);font-size:2rem;color:var(--cream);margin-bottom:2.5rem;font-weight:400">Delivery Details</h2>
+        <form id="checkoutForm" onsubmit="placeOrder(event)">
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" name="fullName" required placeholder="Yassin Ahmed" type="text"></div>
+          <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" name="email" required placeholder="hello@example.com" type="email"></div>
+          <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" name="phone" required placeholder="010XXXXXXXX" type="tel"></div>
+          <div class="form-group"><label class="form-label">Full Shipping Address</label><textarea class="form-input" name="address" required placeholder="Apartment, street, district, city, governorate" style="height:90px;resize:none;line-height:1.6"></textarea></div>
+          <div class="payment-methods">
+            <h3 style="font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.25rem;font-weight:400">Payment Method</h3>
+            <div class="payment-options">
+              <label class="payment-option selected" id="opt-vodafone">
+                <input type="radio" name="payment" value="vodafone_cash" checked onchange="selectPayment('vodafone')">
+                <div class="payment-radio-custom"></div>
+                <span class="payment-icon">📱</span>
+                <div class="payment-info"><div class="payment-name">Vodafone Cash</div><div class="payment-number">01013202241</div></div>
+              </label>
+              <label class="payment-option" id="opt-instapay">
+                <input type="radio" name="payment" value="instapay" onchange="selectPayment('instapay')">
+                <div class="payment-radio-custom"></div>
+                <span class="payment-icon">💳</span>
+                <div class="payment-info"><div class="payment-name">InstaPay</div><div class="payment-number">01022950178</div></div>
+              </label>
+            </div>
+            <div class="payment-notice">After completing the transfer, please take a screenshot of the payment confirmation and send it via WhatsApp to 01022950178 before your order can be processed.</div>
+            <a id="whatsappBtn" href="https://wa.me/201022950178?text=Hello%20VESTRA%2C%20I%20have%20completed%20my%20payment%20and%20am%20sending%20the%20confirmation%20screenshot." target="_blank" class="whatsapp-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Send Screenshot via WhatsApp
+            </a>
+          </div>
+          <button type="submit" class="btn-primary place-order-btn" style="margin-top:2.5rem">Confirm Order</button>
+        </form>
+      </div>
+      <div style="background:rgba(45,11,20,0.4);border:1px solid rgba(201,169,110,0.15);padding:2rem;position:sticky;top:7rem">
+        <h3 style="font-family:var(--font-serif);font-size:1.25rem;color:var(--cream);margin-bottom:1.5rem;font-weight:400;letter-spacing:0.05em">Your Selection</h3>
+        <div>
+          ${cart.map(item => `
+            <div style="display:flex;justify-content:space-between;gap:1rem;font-size:0.75rem;padding:0.75rem 0;border-bottom:1px solid rgba(201,169,110,0.1)">
+              <span style="color:rgba(245,240,232,0.7);flex:1;font-weight:300">${item.title} × ${item.qty}</span>
+              <span style="color:var(--gold-light);white-space:nowrap">EGP ${(item.price * item.qty).toLocaleString('en-EG')}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:var(--cream);padding-top:1rem;margin-top:0.5rem;border-top:1px solid rgba(201,169,110,0.15)">
+          <span style="letter-spacing:0.05em">Total</span>
+          <span style="color:var(--gold);font-weight:500">EGP ${total.toLocaleString('en-EG')}</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function selectPayment(method) {
+  document.getElementById('opt-vodafone').classList.toggle('selected', method === 'vodafone');
+  document.getElementById('opt-instapay').classList.toggle('selected', method === 'instapay');
+  const num = method === 'vodafone' ? '01013202241' : '01022950178';
+  const msg = `Hello VESTRA, I have completed my payment of EGP ${cart.reduce((s,i)=>s+i.price*i.qty,0).toLocaleString()} via ${method === 'vodafone' ? 'Vodafone Cash to 01013202241' : 'InstaPay to 01022950178'} and am sending the confirmation screenshot.`;
+  document.getElementById('whatsappBtn').href = `https://wa.me/201022950178?text=${encodeURIComponent(msg)}`;
+}
+
+async function placeOrder(e) {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+
+  // Collect all customer fields from the form
+  const orderData = {
+    customer: {
+      fullName:  data.get('fullName'),
+      email:     data.get('email'),
+      phone:     data.get('phone'),
+      address:   data.get('address')
+    },
+    items: cart.map(i => ({
+      productId: i._id,
+      title:     i.title,
+      price:     i.price,
+      quantity:  i.qty
+    })),
+    totalPrice:    cart.reduce((s, i) => s + i.price * i.qty, 0),
+    paymentMethod: data.get('payment')
+  };
+
+  // Validate required fields before submitting
+  const { fullName, email, phone, address } = orderData.customer;
+  if (!fullName || !email || !phone || !address) {
+    showToast('Please fill in all delivery details.');
+    return;
+  }
+
+  const btn = form.querySelector('[type="submit"]');
+  btn.textContent = 'Processing…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+
+    const result = await res.json().catch(() => ({}));
+
+    if (res.ok && result.success) {
+      // Clear cart and show confirmation screen
+      cart = []; saveCart(); updateCartUI();
+
+      const paymentLabel = orderData.paymentMethod === 'instapay' ? 'InstaPay (01022950178)' : 'Vodafone Cash (01013202241)';
+      const itemsSummary = orderData.items.map(i => `${i.title} ×${i.quantity}`).join(', ');
+      const waText = encodeURIComponent(
+        `Hello VESTRA 👋\nI'm ${fullName} and I've just placed an order.\n\nItems: ${itemsSummary}\nTotal: EGP ${orderData.totalPrice.toLocaleString('en-EG')}\nPayment: ${paymentLabel}\n\nPlease find my payment screenshot attached.`
+      );
+
+      document.getElementById('checkoutPage').innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem">
+          <div style="font-family:var(--font-serif);font-size:3.5rem;color:var(--gold);margin-bottom:1.5rem;animation:fadeIn 0.6s ease">✓</div>
+          <h2 style="font-family:var(--font-serif);font-size:2.5rem;color:var(--cream);font-weight:300;margin-bottom:1rem">Order Confirmed</h2>
+          <p style="color:rgba(245,240,232,0.6);font-size:0.85rem;line-height:1.9;max-width:480px;margin-bottom:0.75rem;font-weight:300">
+            Thank you, <strong style="color:var(--cream)">${fullName}</strong>. Your order has been received and we've been notified instantly.
+          </p>
+          <p style="color:rgba(245,240,232,0.45);font-size:0.75rem;line-height:1.7;max-width:420px;margin-bottom:2.5rem;font-weight:300">
+            Please send your payment screenshot via WhatsApp to complete processing.
+          </p>
+          <a href="https://wa.me/201022950178?text=${waText}" target="_blank" class="whatsapp-btn" style="max-width:340px;margin-bottom:1rem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Send Screenshot via WhatsApp
+          </a>
+          <button onclick="document.getElementById('checkoutPage').remove();document.body.style.overflow=''" class="btn-secondary">Continue Shopping</button>
+        </div>`;
+    } else {
+      showToast(result.error || 'Something went wrong. Please try again.');
+      btn.textContent = 'Confirm Order';
+      btn.disabled = false;
+    }
+  } catch (err) {
+    console.error('Order error:', err);
+    showToast('Network error. Please check your connection and try again.');
+    btn.textContent = 'Confirm Order';
+    btn.disabled = false;
+  }
+}
+
+function initCheckoutEvents() { /* handled inline */ }
+
+// ===== TOAST =====
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// ===== INIT =====
+loadProducts();
+updateCartUI();
+</script>
+</body>
+</html>
